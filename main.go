@@ -9,16 +9,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/encodeous/wireguard-go/conn"
+	"github.com/encodeous/wireguard-go/device"
+	"github.com/encodeous/wireguard-go/ipc"
+	"github.com/encodeous/wireguard-go/tun"
 	"os"
 	"os/signal"
 	"runtime"
 	"strconv"
 
 	"golang.org/x/sys/unix"
-	"golang.zx2c4.com/wireguard/conn"
-	"golang.zx2c4.com/wireguard/device"
-	"golang.zx2c4.com/wireguard/ipc"
-	"golang.zx2c4.com/wireguard/tun"
 )
 
 const (
