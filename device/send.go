@@ -275,6 +275,11 @@ func (device *Device) RoutineReadFromTUN() {
 			}
 
 			if peer == nil {
+				// dont drop, instead loop back to the system.
+				_, err := device.tun.device.Write(bufs, MessageTransportOffsetContent)
+				if err != nil && !device.isClosed() {
+					device.log.Errorf("Failed to loop back packets to TUN device: %v", err)
+				}
 				continue
 			}
 			elemsForPeer, ok := elemsByPeer[peer]
