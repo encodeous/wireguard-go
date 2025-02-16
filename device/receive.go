@@ -472,8 +472,6 @@ func (peer *Peer) RoutineSequentialReceiver(maxBatchSize int) {
 			}
 			dataPacketReceived = true
 
-			var dstPeer *Peer
-
 			switch elem.packet[0] >> 4 {
 			case 4:
 				if len(elem.packet) < ipv4.HeaderLen {
@@ -490,9 +488,6 @@ func (peer *Peer) RoutineSequentialReceiver(maxBatchSize int) {
 					device.log.Verbosef("IPv4 packet with disallowed source address from %v", peer)
 					continue
 				}
-
-				dst := elem.packet[IPv4offsetDst : IPv4offsetDst+net.IPv4len]
-				dstPeer = device.allowedips.Lookup(dst)
 
 			case 6:
 				if len(elem.packet) < ipv6.HeaderLen {
@@ -511,25 +506,12 @@ func (peer *Peer) RoutineSequentialReceiver(maxBatchSize int) {
 					continue
 				}
 
-				dst := elem.packet[IPv6offsetDst : IPv6offsetDst+net.IPv6len]
-				dstPeer = device.allowedips.Lookup(dst)
 			default:
 				device.log.Verbosef("Packet with invalid IP version from %v", peer)
 				continue
 			}
 
-			if dstPeer != nil {
-				device.queue.routing <- QueueFastPathRoutingElement{
-					buffer: elem.buffer,
-					offset: MessageTransportOffsetContent,
-					length: len(elem.packet),
-					from:   peer,
-					to:     dstPeer,
-				}
-				elem.buffer = nil
-			} else {
-				bufs = append(bufs, elem.buffer[:MessageTransportOffsetContent+len(elem.packet)])
-			}
+			bufs = append(bufs, elem.buffer[:MessageTransportOffsetContent+len(elem.packet)])
 		}
 
 		peer.rxBytes.Add(rxBytesLen)

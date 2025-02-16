@@ -79,7 +79,6 @@ type Device struct {
 	queue struct {
 		encryption *outboundQueue
 		decryption *inboundQueue
-		routing    chan QueueFastPathRoutingElement // fast path routing channel
 		handshake  *handshakeQueue
 	}
 

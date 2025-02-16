@@ -58,14 +58,6 @@ type QueueOutboundElementsContainer struct {
 	elems []*QueueOutboundElement
 }
 
-type QueueFastPathRoutingElement struct {
-	buffer *[MaxMessageSize]byte
-	offset int
-	length int
-	to     *Peer
-	from   *Peer
-}
-
 func (device *Device) NewOutboundElement() *QueueOutboundElement {
 	elem := device.GetOutboundElement()
 	elem.buffer = device.GetMessageBuffer()
@@ -226,7 +218,7 @@ func (device *Device) RoutineReadFromTUN() {
 	device.log.Verbosef("Routine: TUN reader - started")
 
 	var (
-		batchSize   = device.BatchSize() + 4 // to accommodate for routed packets
+		batchSize   = device.BatchSize()
 		readErr     error
 		elems       = make([]*QueueOutboundElement, batchSize)
 		bufs        = make([][]byte, batchSize)
@@ -253,7 +245,6 @@ func (device *Device) RoutineReadFromTUN() {
 	for {
 		// read packets
 		count, readErr = device.tun.device.Read(bufs, sizes, offset)
-
 		for i := 0; i < count; i++ {
 			if sizes[i] < 1 {
 				continue
@@ -294,38 +285,6 @@ func (device *Device) RoutineReadFromTUN() {
 			elemsForPeer.elems = append(elemsForPeer.elems, elem)
 			elems[i] = device.NewOutboundElement()
 			bufs[i] = elems[i].buffer[:]
-		}
-
-	FpRouting:
-		for count < batchSize {
-			select {
-			case ele := <-device.queue.routing:
-				i := count
-
-				bufs[i] = ele.buffer[:]
-				sizes[i] = ele.length
-				peer := ele.to
-
-				elem := elems[i]
-				elem.packet = bufs[i][ele.offset : ele.offset+sizes[i]]
-
-				device.log.Verbosef("Forwarding packet from %s to %s", ele.from, ele.to)
-
-				elemsForPeer, ok := elemsByPeer[peer]
-				if !ok {
-					elemsForPeer = device.GetOutboundElementsContainer()
-					elemsByPeer[peer] = elemsForPeer
-				}
-
-				elemsForPeer.elems = append(elemsForPeer.elems, elem)
-
-				elems[i] = device.NewOutboundElement()
-				bufs[i] = elems[i].buffer[:]
-
-				count++
-			default:
-				break FpRouting
-			}
 		}
 
 		for peer, elemsForPeer := range elemsByPeer {
