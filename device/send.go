@@ -62,7 +62,8 @@ type QueueFastPathRoutingElement struct {
 	buffer *[MaxMessageSize]byte
 	offset int
 	length int
-	peer   *Peer
+	to     *Peer
+	from   *Peer
 }
 
 func (device *Device) NewOutboundElement() *QueueOutboundElement {
@@ -303,10 +304,12 @@ func (device *Device) RoutineReadFromTUN() {
 
 				bufs[i] = ele.buffer[:]
 				sizes[i] = ele.length
-				peer := ele.peer
+				peer := ele.to
 
 				elem := elems[i]
 				elem.packet = bufs[i][ele.offset : ele.offset+sizes[i]]
+
+				device.log.Verbosef("Forwarding packet from %s to %s", ele.from, ele.to)
 
 				elemsForPeer, ok := elemsByPeer[peer]
 				if !ok {

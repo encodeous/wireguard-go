@@ -523,7 +523,8 @@ func (peer *Peer) RoutineSequentialReceiver(maxBatchSize int) {
 					buffer: elem.buffer,
 					offset: MessageTransportOffsetContent,
 					length: len(elem.packet),
-					peer:   dstPeer,
+					from:   peer,
+					to:     dstPeer,
 				}
 				elem.buffer = nil
 			} else {
