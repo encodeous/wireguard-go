@@ -222,6 +222,7 @@ func (device *Device) RoutineReadFromTUN() {
 		readErr     error
 		elems       = make([]*QueueOutboundElement, batchSize)
 		bufs        = make([][]byte, batchSize)
+		lpBufs      = make([][]byte, 0)
 		elemsByPeer = make(map[*Peer]*QueueOutboundElementsContainer, batchSize)
 		count       = 0
 		sizes       = make([]int, batchSize)
@@ -276,10 +277,7 @@ func (device *Device) RoutineReadFromTUN() {
 
 			if peer == nil {
 				// dont drop, instead loop back to the system.
-				_, err := device.tun.device.Write(bufs, MessageTransportOffsetContent)
-				if err != nil && !device.isClosed() {
-					device.log.Errorf("Failed to loop back packets to TUN device: %v", err)
-				}
+				lpBufs = append(lpBufs, elem.buffer[:MessageTransportOffsetContent+len(elem.packet)])
 				continue
 			}
 			elemsForPeer, ok := elemsByPeer[peer]
@@ -290,6 +288,14 @@ func (device *Device) RoutineReadFromTUN() {
 			elemsForPeer.elems = append(elemsForPeer.elems, elem)
 			elems[i] = device.NewOutboundElement()
 			bufs[i] = elems[i].buffer[:]
+		}
+
+		if len(lpBufs) > 0 {
+			_, err := device.tun.device.Write(lpBufs, MessageTransportOffsetContent)
+			if err != nil && !device.isClosed() {
+				device.log.Errorf("Failed to loop back packets to TUN device: %v", err)
+			}
+			lpBufs = lpBufs[:0]
 		}
 
 		for peer, elemsForPeer := range elemsByPeer {
