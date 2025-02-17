@@ -202,6 +202,11 @@ func (device *Device) RoutineReceiveIncoming(maxBatchSize int, recv conn.Receive
 				if len(packet) != MessageCookieReplySize {
 					continue
 				}
+			case PolySockType:
+				if device.net.polySocket != nil && device.net.polySocket.recv != nil {
+					device.net.polySocket.recv.Receive(packet[4:], endpoints[i])
+				}
+				continue
 
 			default:
 				device.log.Verbosef("Received message with unknown type")

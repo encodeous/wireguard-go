@@ -45,6 +45,7 @@ type Device struct {
 		port          uint16 // listening port
 		fwmark        uint32 // mark value (0 = disabled)
 		brokenRoaming bool
+		polySocket    *PolySock
 	}
 
 	staticIdentity struct {
@@ -74,6 +75,7 @@ type Device struct {
 		messageBuffers            *WaitPool
 		inboundElements           *WaitPool
 		outboundElements          *WaitPool
+		outboundPolyElements      *WaitPool
 	}
 
 	queue struct {
@@ -203,6 +205,7 @@ func (device *Device) downLocked() error {
 	for _, peer := range device.peers.keyMap {
 		peer.Stop()
 	}
+	device.net.polySocket.stop()
 	device.peers.RUnlock()
 	return err
 }
@@ -323,7 +326,16 @@ func NewDevice(tunDevice tun.Device, bind conn.Bind, logger *Logger) *Device {
 	go device.RoutineReadFromTUN()
 	go device.RoutineTUNEventReader()
 
+	batchSize := device.BatchSize()
+	device.net.polySocket = newPolySock(device)
+	go device.net.polySocket.routinePolySender(batchSize)
+
 	return device
+}
+
+func (device *Device) PolyListen(recv PolyReceiver) *PolySock {
+	device.net.polySocket.recv = recv
+	return device.net.polySocket
 }
 
 // BatchSize returns the BatchSize for the device as a whole which is the max of
