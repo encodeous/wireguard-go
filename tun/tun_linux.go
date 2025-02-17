@@ -17,8 +17,8 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/encodeous/wireguard-go/conn"
-	"github.com/encodeous/wireguard-go/rwcancel"
+	"github.com/encodeous/polyamide/conn"
+	"github.com/encodeous/polyamide/rwcancel"
 	"golang.org/x/sys/unix"
 )
 

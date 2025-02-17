@@ -20,10 +20,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/encodeous/wireguard-go/conn"
-	"github.com/encodeous/wireguard-go/conn/bindtest"
-	"github.com/encodeous/wireguard-go/tun"
-	"github.com/encodeous/wireguard-go/tun/tuntest"
+	"github.com/encodeous/polyamide/conn"
+	"github.com/encodeous/polyamide/conn/bindtest"
+	"github.com/encodeous/polyamide/tun"
+	"github.com/encodeous/polyamide/tun/tuntest"
 )
 
 // uapiCfg returns a string that contains cfg formatted use with IpcSet.

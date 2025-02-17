@@ -9,10 +9,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/encodeous/wireguard-go/conn"
-	"github.com/encodeous/wireguard-go/device"
-	"github.com/encodeous/wireguard-go/ipc"
-	"github.com/encodeous/wireguard-go/tun"
+	"github.com/encodeous/polyamide/conn"
+	"github.com/encodeous/polyamide/device"
+	"github.com/encodeous/polyamide/ipc"
+	"github.com/encodeous/polyamide/tun"
 	"os"
 	"os/signal"
 	"runtime"

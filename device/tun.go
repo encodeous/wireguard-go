@@ -8,7 +8,7 @@ package device
 import (
 	"fmt"
 
-	"github.com/encodeous/wireguard-go/tun"
+	"github.com/encodeous/polyamide/tun"
 )
 
 const DefaultMTU = 1420

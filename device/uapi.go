@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/encodeous/wireguard-go/ipc"
+	"github.com/encodeous/polyamide/ipc"
 )
 
 type IPCError struct {

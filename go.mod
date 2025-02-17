@@ -1,4 +1,4 @@
-module github.com/encodeous/wireguard-go
+module github.com/encodeous/polyamide
 
 go 1.23.1
 

@@ -11,10 +11,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/encodeous/wireguard-go/conn"
-	"github.com/encodeous/wireguard-go/ratelimiter"
-	"github.com/encodeous/wireguard-go/rwcancel"
-	"github.com/encodeous/wireguard-go/tun"
+	"github.com/encodeous/polyamide/conn"
+	"github.com/encodeous/polyamide/ratelimiter"
+	"github.com/encodeous/polyamide/rwcancel"
+	"github.com/encodeous/polyamide/tun"
 )
 
 type Device struct {

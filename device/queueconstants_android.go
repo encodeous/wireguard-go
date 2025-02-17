@@ -5,7 +5,7 @@
 
 package device
 
-import "github.com/encodeous/wireguard-go/conn"
+import "github.com/encodeous/polyamide/conn"
 
 /* Reduce memory consumption for Android */
 

@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/encodeous/wireguard-go/conn"
+	"github.com/encodeous/polyamide/conn"
 )
 
 type Peer struct {

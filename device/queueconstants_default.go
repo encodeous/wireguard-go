@@ -7,7 +7,7 @@
 
 package device
 
-import "github.com/encodeous/wireguard-go/conn"
+import "github.com/encodeous/polyamide/conn"
 
 const (
 	QueueStagedSize            = conn.IdealBatchSize
