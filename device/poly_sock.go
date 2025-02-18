@@ -27,7 +27,7 @@ func (s *PolySock) Send(packet []byte, endpoint conn.Endpoint) {
 	elem := &outboundElement{}
 	elem.buffer = s.device.GetMessageBuffer()
 	copy(elem.buffer[4:], packet)
-	binary.LittleEndian.PutUint32(packet[:4], PolySockType)
+	binary.LittleEndian.PutUint32(elem.buffer[:4], PolySockType)
 	elem.packet = elem.buffer[:4+len(packet)]
 	elem.ep = endpoint
 	s.outQueue <- elem
