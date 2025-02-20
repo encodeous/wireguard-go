@@ -278,10 +278,8 @@ func (device *Device) RoutineReadFromTUN() {
 			if peer == nil {
 				// dont drop, instead loop back to the system.
 				lpBufs = append(lpBufs, elem.buffer[:MessageTransportOffsetContent+len(elem.packet)])
-				device.log.Verbosef("Bounced packet back to system")
 				continue
 			}
-			device.log.Verbosef("Fwd packet to peer: %v", peer)
 			elemsForPeer, ok := elemsByPeer[peer]
 			if !ok {
 				elemsForPeer = device.GetOutboundElementsContainer()
